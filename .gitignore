@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# zipped versions of the app
+*.zip
+
+#JSHint files
+.jshintrc

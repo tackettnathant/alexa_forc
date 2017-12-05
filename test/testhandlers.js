@@ -1,85 +1,135 @@
 var expect = require('chai').expect;
-var index = require('../index');
-
+var assert = require('assert');
+const {getContext,getTestData} = require('./contextFactory');
 const context = require('aws-lambda-mock-context');
-const ctx = context();
+const Constants = require('../app/constants');
 
-describe("Testing a session with the AboutIntent", function() {
-    var speechResponse = null
-    var speechError = null
-
-    before(function(done){
-        index.handler({
-  "session": {
-    "new": true,
-    "sessionId": "SessionId.1b913cc4-7467-4949-b7c5-c98064c41128",
-    "application": {
-      "applicationId": "amzn1.ask.skill.0b012f01-205a-4937-9ea8-7c536317f66c"
-    },
-    "attributes": {},
-    "user": {
-      "userId": null
-    }
-  },
-  "request": {
-    "type": "IntentRequest",
-    "requestId": "EdwRequestId.08f780eb-94dc-48d5-bf21-2aee3fa92728",
-    "intent": {
-      "name": "OpenTrailIntent",
-      "slots": {
-        "trail_name": {
-          "name": "trail_name",
-          "value": "ILLINIWEK"
-        }
-      }
-    },
-    "locale": "en-US",
-    "timestamp": "2017-11-30T03:54:17Z"
-  },
-  "context": {
-    "AudioPlayer": {
-      "playerActivity": "IDLE"
-    },
-    "System": {
-      "application": {
-        "applicationId": "amzn1.ask.skill.0b012f01-205a-4937-9ea8-7c536317f66c"
-      },
-      "user": {
-        "userId": "amzn1.ask.account.AEQ5E2SMUN6RJCXGBQZ4AJ6NNFUH4BPPCW5YGWYSQFL2RPALKUCEG6P7XWMDPBYPZY3DIUFSNHFG3PTWJZQ37Q6CMHSRJRRQ4SCTA3XBB6TSZZEGWHFUJQFEAZSXSGKXIG4C3UMXLISOLVKT2IGASDGGDXY5T7VUFNPVFEGUDY4HX74RLS5EJRMGQJJFJZ3YAJ3HINBKHW3E33Y"
-      },
-      "device": {
-        "supportedInterfaces": {}
-      }
-    }
-  },
-  "version": "1.0"
-}, ctx)
-
+describe("Testing Amazon required handlers",function(){
+    describe("Testing LaunchRequest session",function(){
+      var response=null;
+      var error=null;
+      const ctx = context();
+      before(function(done){
+        var index = require('../index');
+        index.handler(getContext("LaunchRequest"),ctx);
         ctx.Promise
-            .then(resp => { speechResponse = resp; console.log(resp);done(); })
-            .catch(err => { speechError = err; done(); })
-    })
+            .then(resp => { response = resp;done(); })
+            .catch(err => { error = err;done(); })
+      })
 
-    describe("The response is structurally correct for Alexa Speech Services", function() {
+      describe("The response is structurally correct for Alexa Speech Services", function() {
         it('should not have errored',function() {
-            expect(speechError).to.be.null
+            expect(error).to.be.null
         })
 
-        it('should have a version', function() {
-            expect(speechResponse.version).not.to.be.null
-        })
+      })
 
-        it('should have a speechlet response', function() {
-            expect(speechResponse.response).not.to.be.null
+      describe("The response should contain the appropriate message", function() {
+        it("should have the appropriate prompt",function(){
+          expect(response.response.outputSpeech.ssml.includes(Constants.translate('MSG_WELCOME','en-US'))).to.be.true;
         })
-
-        it("should have a spoken response", () => {
-            expect(speechResponse.response.outputSpeech).not.to.be.null
-        })
-
-        it("should end the alexa session", function() {
-            expect(speechResponse.response.shouldEndSession).not.to.be.null
-            expect(speechResponse.response.shouldEndSession).to.be.true
-        })
+      })
     })
+
+    describe("Testing HelpIntent session",function(){
+      var response=null;
+      var error=null;
+      const ctx = context();
+      before(function(done){
+        var index = require('../index');
+        index.handler(getContext("AMAZON.HelpIntent"),ctx);
+        ctx.Promise
+            .then(resp => { response = resp;done(); })
+            .catch(err => { error = err;done(); })
+      })
+
+      describe("The response is structurally correct for Alexa Speech Services", function() {
+        it('should not have errored',function() {
+            expect(error).to.be.null
+        })
+
+      })
+
+      describe("The response should contain the appropriate message", function() {
+        it("should have the appropriate prompt",function(){
+          expect(response.response.outputSpeech.ssml.includes(Constants.translate('MSG_HELP','en-US'))).to.be.true;
+        })
+      })
+    })
+    describe("Testing CancelIntent session",function(){
+      var response=null;
+      var error=null;
+      const ctx = context();
+      before(function(done){
+        var index = require('../index');
+        index.handler(getContext("AMAZON.CancelIntent"),ctx);
+        ctx.Promise
+            .then(resp => { response = resp;done(); })
+            .catch(err => { error = err;done(); })
+      })
+
+      describe("The response is structurally correct for Alexa Speech Services", function() {
+        it('should not have errored',function() {
+            expect(error).to.be.null
+        })
+
+      })
+
+      describe("The response should contain the appropriate message", function() {
+        it("should have the appropriate prompt",function(){
+          expect(response.response.outputSpeech.ssml.includes(Constants.translate('MSG_BYE','en-US'))).to.be.true;
+        })
+      })
+    })
+    describe("Testing StopIntent session",function(){
+      var response=null;
+      var error=null;
+      const ctx = context();
+      before(function(done){
+        var index = require('../index');
+        index.handler(getContext("AMAZON.StopIntent"),ctx);
+        ctx.Promise
+            .then(resp => { response = resp;done(); })
+            .catch(err => { error = err;done(); })
+      })
+
+      describe("The response is structurally correct for Alexa Speech Services", function() {
+        it('should not have errored',function() {
+            expect(error).to.be.null
+        })
+
+      })
+
+      describe("The response should contain the appropriate message", function() {
+        it("should have the appropriate prompt",function(){
+          expect(response.response.outputSpeech.ssml.includes(Constants.translate('MSG_BYE','en-US'))).to.be.true;
+        })
+      })
+    })
+    describe("Testing Unhandled session",function(){
+      var response=null;
+      var error=null;
+      const ctx = context();
+      before(function(done){
+        var index = require('../index');
+        index.handler(getContext("Unhandled"),ctx);
+        ctx.Promise
+            .then(resp => { response = resp;done(); })
+            .catch(err => { error = err;done(); })
+      })
+
+      describe("The response is structurally correct for Alexa Speech Services", function() {
+        it('should not have errored',function() {
+            expect(error).to.be.null
+        })
+
+      })
+
+      describe("The response should contain the appropriate message", function() {
+        it("should have the appropriate prompt",function(){
+          expect(response.response.outputSpeech.ssml.includes(Constants.translate('MSG_UNHANDLED','en-US'))).to.be.true;
+        })
+      })
+    })
+    
 })
