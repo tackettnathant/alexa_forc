@@ -34,6 +34,10 @@ const tidyName=function(str) {
     //probably sunderbrook
     return Constants.TRAIL_NAME_SUNDERBRUCH;
   }
+  if (str.toUpperCase().indexOf("LINE")>-1 || str.toUpperCase().indexOf("AWAKE")>-1){
+    //Sometimes Illiniwek comes in as line awake
+    return Constants.TRAIL_NAME_ILLINIWEK;
+  }
   return str;
 }
 

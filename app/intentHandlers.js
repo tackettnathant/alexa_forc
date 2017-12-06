@@ -52,7 +52,7 @@ const openTrailIntent = function(handler) {
 }
 
 const helpIntent=function(handler){
-  handler.response.speak(handler.t('MSG_HELP')).listen(handler.t('MSG_HELP_PROMPT'));
+  handler.response.speak(handler.t('MSG_HELP')+". "+handler.t("MSG_HELP_PROMPT")).listen(handler.t('MSG_HELP_PROMPT'));
   handler.emit(':responseReady');
 }
 
